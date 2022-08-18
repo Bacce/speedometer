@@ -1,38 +1,29 @@
+import NoSleep from 'nosleep.js';
 import React, { useEffect, useState } from 'react';
 
-//navigator.geolocation.watchPosition((data)=>{console.log("Update", data)}, (err)=>{console.log("Err", err)}, {timeout: 5000, maximumAge: 0, enableHighAccuracy: false});
-
 const App = () => {
+  const noSleep = new NoSleep();
   const [speed, setSpeed] = useState(0);
   const options = {
     enableHighAccuracy: true,
-    timeout: 500,
-    maximumAge: 0  
+    timeout: 50,
+    maximumAge: 0
   };
 
   const successCb = (pos:any) => {
     console.log("succ", pos.coords.speed);
-    setSpeed(pos.coords.speed);
+    const speedRounded = Math.floor(pos.coords.speed * 100) / 100;
+    setSpeed(speedRounded);
   }
   const errorCb = (err:any) => {
     console.log("err", err);
   }
 
   useEffect(() => {
-    if (navigator.geolocation) {
+    noSleep.enable(); // Stop screen sleep for mobile devices
+    if (navigator.geolocation) { // Watch location change
       navigator.geolocation.watchPosition(successCb, errorCb, options);
     }
-
-    // if ('geolocation' in navigator) {
-    //   navigator.geolocation.watchPosition((data)=>{console.log("Update", data)}, (err)=>{console.log("Err", err)}, {timeout: 5000, maximumAge: 0, enableHighAccuracy: false});
-
-    //   navigator.geolocation.getCurrentPosition((data) => {
-    //     console.log(data);
-    //     setLocation("");
-    //   });
-    // } else {
-    //   /* geolocation IS NOT available */
-    // }
   },[]);
 
   return (
