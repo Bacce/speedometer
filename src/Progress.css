@@ -1,0 +1,61 @@
+:root {
+    --tlt-br-cnt: 240;
+    --i: 0;
+}
+
+@keyframes barCreationAnimation {
+    from {opacity: 0}
+    to {opacity: 1}
+}
+
+.progress {
+    margin: 50px;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+
+  .progress i {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transform: rotate(calc(-80deg + calc(calc(360deg / var(--tlt-br-cnt)) * var(--i))));
+  }
+
+  .progress i::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: hsla(0, 0%,100%, 12%);
+    width: 2px;
+    height: 20px;
+    transform: rotate(-45deg);
+    transform-origin: top;
+    opacity: 1;
+    /* animation: barCreationAnimation 100ms ease forwards; */
+    animation-delay: calc(var(--i) * 15ms);
+  }
+  .progress .selected::after {
+    background: hsl(130, 100%, 50%);
+  }
+
+  .progress :not(.selected)::after {
+    background: hsl(120, 2%, 62%);
+  }
+  
+  .percent-text {
+    font-size: 3rem;
+    /* animation: barCreationAnimation 500ms ease forwards;
+    animation-delay: calc(var(--tlt-br-cnt) * 15ms / 2); */
+  }
+  .text{
+    color: hsl(130, 100%, 50%);
+    opacity: 1;
+  }

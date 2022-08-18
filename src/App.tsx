@@ -1,9 +1,12 @@
 import NoSleep from 'nosleep.js';
 import React, { useEffect, useState } from 'react';
+import './App.css';
+import { Progress } from './Progress';
 
 const App = () => {
   const noSleep = new NoSleep();
-  const [speed, setSpeed] = useState(0);
+  const [speed, setSpeed] = useState(100);
+  const [fullscreenBtn, setFullscreenBtn] = useState(true);
   const options = {
     enableHighAccuracy: true,
     timeout: 50,
@@ -20,11 +23,8 @@ const App = () => {
   }
 
   const handleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen();
-    } else if (document.exitFullscreen) {
-      document.exitFullscreen();
-    }
+    document.documentElement.requestFullscreen(); // Start app in fullscreen
+    setFullscreenBtn(false);
   }
 
   useEffect(() => {
@@ -35,9 +35,10 @@ const App = () => {
   },[]);
 
   return (
-    <div className="App">
-      <h1>{Number(speed)}</h1>
-      <button onClick={handleFullscreen}>Fullscreen</button>
+    <div>
+      {/* <input type="text" value={speed} onChange={(e)=>{setSpeed(Number(e.target.value))}} /> */}
+      <Progress value={speed}/>
+      {fullscreenBtn && (<button className={"fullscreen-btn"} onClick={handleFullscreen}>Fullscreen</button>)}
     </div>
   );
 }

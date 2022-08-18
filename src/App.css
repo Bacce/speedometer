@@ -1,0 +1,13 @@
+body {
+    margin: 0;
+    font-family: sans-serif;
+}
+
+.fullscreen-btn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate3d(-50%, -50%, 0);
+    padding:80px 100px;
+    font-size: 25px;
+}
