@@ -19,6 +19,14 @@ const App = () => {
     console.log("err", err);
   }
 
+  const handleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+    } else if (document.exitFullscreen) {
+      document.exitFullscreen();
+    }
+  }
+
   useEffect(() => {
     noSleep.enable(); // Stop screen sleep for mobile devices
     if (navigator.geolocation) { // Watch location change
@@ -29,6 +37,7 @@ const App = () => {
   return (
     <div className="App">
       <h1>{Number(speed)}</h1>
+      <button onClick={handleFullscreen}>Fullscreen</button>
     </div>
   );
 }
