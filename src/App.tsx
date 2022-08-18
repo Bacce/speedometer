@@ -12,7 +12,7 @@ const App = () => {
 
   const successCb = (pos:any) => {
     console.log("succ", pos.coords.speed);
-    const speedRounded = Math.floor(pos.coords.speed * 100) / 100;
+    const speedRounded = Math.floor((pos.coords.speed*3.6) * 100) / 100; // Convert to Km/h and round
     setSpeed(speedRounded);
   }
   const errorCb = (err:any) => {
