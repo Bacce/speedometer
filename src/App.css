@@ -8,6 +8,6 @@ body {
     top: 50%;
     left: 50%;
     transform: translate3d(-50%, -50%, 0);
-    padding:80px 100px;
+    padding: 80px 100px;
     font-size: 25px;
 }

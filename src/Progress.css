@@ -8,8 +8,14 @@
     to {opacity: 1}
 }
 
+.progress.centeralign {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
 .progress {
-    margin: 50px;
     width: 200px;
     height: 200px;
     border-radius: 50%;
@@ -35,7 +41,7 @@
     left: 0;
     background: hsla(0, 0%,100%, 12%);
     width: 2px;
-    height: 20px;
+    height: 40px;
     transform: rotate(-45deg);
     transform-origin: top;
     opacity: 1;
@@ -44,10 +50,12 @@
   }
   .progress .selected::after {
     background: hsl(130, 100%, 50%);
+    background: linear-gradient(227deg, #8eff47, transparent);
   }
 
   .progress :not(.selected)::after {
     background: hsl(120, 2%, 62%);
+    background: linear-gradient(227deg, #779fc9, transparent);
   }
   
   .percent-text {
@@ -56,6 +64,7 @@
     animation-delay: calc(var(--tlt-br-cnt) * 15ms / 2); */
   }
   .text{
-    color: hsl(130, 100%, 50%);
+    text-align: center;
+    color: #7abf7a;
     opacity: 1;
   }
