@@ -16,7 +16,7 @@ const App = () => {
   const successCb = (pos:any) => {
     console.log("succ", pos.coords.speed);
     const speedRounded = Math.floor((pos.coords.speed*3.6) * 100) / 100; // Convert to Km/h and round
-    //setSpeed(speedRounded);
+    setSpeed(speedRounded);
   }
   const errorCb = (err:any) => {
     console.log("err", err);
@@ -36,7 +36,7 @@ const App = () => {
 
   return (
     <div>
-      <input type="text" value={speed} onChange={(e)=>{setSpeed(Number(e.target.value))}} />
+      {/* <input type="text" value={speed} onChange={(e)=>{setSpeed(Number(e.target.value))}} /> */}
       <Progress value={speed}/>
       {fullscreenBtn && (<button className={"fullscreen-btn"} onClick={handleFullscreen}>Fullscreen</button>)}
     </div>
