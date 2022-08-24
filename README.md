@@ -1,6 +1,9 @@
 # Speedometer
-Speedometer implementation with web technologies using the Geolocation API
+Functional speedometer implementation with web technologies using the Geolocation API
+
 Fullscreen and no-sleep for convenient
+
+Tested on Android Chrome, but it was not working for me on chrome on ubuntu as I don't get speed from the Geolocation API.
 
 
 
