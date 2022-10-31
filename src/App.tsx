@@ -1,18 +1,22 @@
 import {parse, stringify} from 'zipson';
 import NoSleep from 'nosleep.js';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import './App.css';
 import { Diagram } from './Diagram';
 import { Progress } from './Progress';
 
 const App = () => {
+  const [, updateState] = useState<any>();
+  const forceUpdate = useCallback(() => updateState({}), []);
+ 
+
   const debug = true;
   const noSleep = new NoSleep();
   const [speed, setSpeed] = useState(0);
   const [fullscreenBtn, setFullscreenBtn] = useState(true);
   const [logSpeed, setLogSpeed] = useState<number[]>([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]);
   const speedsLog = useRef<{speed:number,time:number, coords: any}[]>([]);
-  const stored = useRef(0);
+  const [stored, setStored] = useState(0);
 
 
   const options = {
@@ -24,8 +28,14 @@ const App = () => {
   const successCb = (pos:any) => {
     console.log("succ", pos.coords);
     const speedRounded = Math.floor((pos.coords.speed*3.6) * 100) / 100; // Convert to Km/h and round
+    console.log("SR",speedRounded);
     const currentTime = + new Date();
-    speedsLog.current = [...speedsLog.current, {speed:pos.coords.speed*3.6, time: currentTime, coords: {lat:pos.coords.latitude, long: pos.coords.longitude} }];
+
+    let newSpeedLogs = [...speedsLog.current];
+    let newData = {speed:pos.coords.speed*3.6, time: currentTime, coords: {lat:pos.coords.latitude, long: pos.coords.longitude}};
+    newSpeedLogs.push(newData);
+    speedsLog.current = newSpeedLogs;
+    forceUpdate();
     setSpeed(speedRounded);
   }
   
@@ -44,6 +54,11 @@ const App = () => {
     return newArray;
   }
 
+  const geoloc = useCallback(async()=>{
+    if (navigator.geolocation) { // Watch location change
+      navigator.geolocation.watchPosition(await successCb, errorCb, options);
+    }
+  },[]);
 
   useEffect(()=>{
     setLogSpeed(addToArray(logSpeed, speed));
@@ -51,26 +66,20 @@ const App = () => {
 
   useEffect(()=>{
     if(speedsLog.current && speedsLog.current.length > 0) {
-      stored.current = stored.current+1;
-      console.log("speeds log saved", speedsLog.current);
-      localStorage.setItem("speedsLog", stringify(JSON.stringify(speedsLog.current)));
-      // alert(stringify(JSON.stringify(speedsLog.current)));
-      //localStorage.setItem("speedsLog", "");
+      setStored(stored+1);
+      localStorage.setItem("speedsLog", stringify(speedsLog.current));
     }
   },[speedsLog.current]);
 
   useEffect(() => {
     noSleep.enable(); // Stop screen sleep for mobile devices
-    if (navigator.geolocation) { // Watch location change
-      navigator.geolocation.watchPosition(successCb, errorCb, options);
-    }
-
+    geoloc().catch((e)=>{console.log("err", e)});
     // Load data from localstorage
     const speeds = localStorage.getItem("speedsLog");
     
     if(speeds){
       console.log("speeds log loaded");
-      speedsLog.current = JSON.parse(parse(speeds));
+      speedsLog.current = parse(speeds);
     }
   },[]);
 
@@ -84,9 +93,12 @@ const App = () => {
       <Progress value={speed}/>
       {/* {fullscreenBtn && (<button className={"fullscreen-btn"} onClick={handleFullscreen}>Fullscreen</button>)} */}
       <p>Log count: {speedsLog.current.length}</p>
-      <p>Stored {stored.current}</p>
+      <p>Stored {stored}</p>
       {/* <p>{localStorage.getItem('speedsLog')}</p> */}
-      <button style={{padding: 15}} onClick={()=>{speedsLog.current=[];}}>Clear logs</button>
+      {/* <button style={{padding: 15}} onClick={()=>{speedsLog.current=[];}}>Clear logs</button> */}
+
+      <button style={{padding: 15}} onClick={()=>alert(localStorage.getItem('speedsLog'))}>Get data</button>
+
     </div>
   );
 }
