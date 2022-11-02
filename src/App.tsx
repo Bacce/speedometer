@@ -1,6 +1,6 @@
 import {parse, stringify} from 'zipson';
 import NoSleep from 'nosleep.js';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import './App.css';
 import { Diagram } from './Diagram';
 import { Progress } from './Progress';
@@ -8,16 +8,10 @@ import { Progress } from './Progress';
 const App = () => {
   const [, updateState] = useState<any>();
   const forceUpdate = useCallback(() => updateState({}), []);
- 
-
-  const debug = true;
-  const noSleep = new NoSleep();
+   const noSleep = new NoSleep();
   const [speed, setSpeed] = useState(0);
-  const [fullscreenBtn, setFullscreenBtn] = useState(true);
   const [logSpeed, setLogSpeed] = useState<number[]>([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]);
   const speedsLog = useRef<{speed:number,time:number, coords: any}[]>([]);
-  const [stored, setStored] = useState(0);
-
 
   const options = {
     enableHighAccuracy: true,
@@ -43,15 +37,19 @@ const App = () => {
     console.log("err", err);
   }
 
-  const handleFullscreen = () => {
-    document.documentElement.requestFullscreen(); // Start app in fullscreen
-    setFullscreenBtn(false);
-  }
-
   const addToArray = (array:number[], item:number) => {
     let newArray = array.slice(0,-1); // Remove last item
     newArray.unshift(item);
     return newArray;
+  }
+
+  const downloadHistory = () => {
+    const logs = localStorage.getItem("speedsLog");
+    let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(logs || "");
+    const link = document.createElement("a");
+    link.href = dataStr;
+    link.download = "export_speedometer.zipson";
+    link.click();
   }
 
   const geoloc = useCallback(async()=>{
@@ -66,7 +64,6 @@ const App = () => {
 
   useEffect(()=>{
     if(speedsLog.current && speedsLog.current.length > 0) {
-      setStored(stored+1);
       localStorage.setItem("speedsLog", stringify(speedsLog.current));
     }
   },[speedsLog.current]);
@@ -79,26 +76,17 @@ const App = () => {
     
     if(speeds){
       console.log("speeds log loaded");
+      console.log(JSON.stringify(parse(speeds)));
       speedsLog.current = parse(speeds);
     }
   },[]);
 
   return (
     <div style={{height: '100vh', position: 'relative',}}>
-      {debug ? (<>
-          {/* <input type="text" value={speed} onChange={(e)=>{console.log("Change triggered");setSpeed(Number(e.target.value))}} /> */}
-        </>
-      ):(<></>)}
       <Diagram values={logSpeed} />
-      <Progress value={speed}/>
-      {/* {fullscreenBtn && (<button className={"fullscreen-btn"} onClick={handleFullscreen}>Fullscreen</button>)} */}
+      <Progress value={speed} />
       <p>Log count: {speedsLog.current.length}</p>
-      <p>Stored {stored}</p>
-      {/* <p>{localStorage.getItem('speedsLog')}</p> */}
-      {/* <button style={{padding: 15}} onClick={()=>{speedsLog.current=[];}}>Clear logs</button> */}
-
-      <button style={{padding: 15}} onClick={()=>alert(localStorage.getItem('speedsLog'))}>Get data</button>
-
+      <button style={{padding: 15}} onClick={downloadHistory}>Download logs</button>
     </div>
   );
 }
